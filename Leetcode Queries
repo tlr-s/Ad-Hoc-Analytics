@@ -1,0 +1,81 @@
+/*Write an SQL query to find all the authors that viewed at least one of their own articles.
+Return the result table sorted by id in ascending order.*/
+SELECT DISTINCT author_id AS id
+FROM Views
+WHERE author_id = viewer_id
+ORDER BY id;
+
+/*Write an SQL query that reports the products that were only sold in the spring of 2019. That is, between 2019-01-01 and 2019-03-31 inclusive.
+Return the result table in any order.*/
+SELECT
+    DISTINCT p.product_id,
+    p.product_name
+FROM
+    Product AS p
+JOIN
+    Sales AS s USING(product_id)
+WHERE
+    sale_date BETWEEN "2019-01-01" AND "2019-03-31"
+AND
+    p.product_id NOT IN (
+        SELECT
+            p2.product_id
+        FROM
+            Product AS p2
+        JOIN
+            Sales AS s2 USING(product_id)
+        WHERE
+            sale_date > "2019-03-31" OR sale_date < "2019-01-01")
+ORDER BY
+    p.product_id;
+
+/*Write an SQL query to report the movies with an odd-numbered ID and a description that is not "boring".
+Return the result table ordered by rating in descending order.*/
+SELECT *
+FROM Cinema
+WHERE
+    mod(id, 2) = 1
+    AND
+    description <> 'boring'
+ORDER BY rating DESC;
+
+/*Write an SQL query to report the names of all the salespersons who did not have any orders related to the company with the name "RED".
+Return the result table in any order.*/
+SELECT
+    s.name
+FROM
+    Salesperson AS s
+WHERE
+    s.sales_id NOT IN(
+        SELECT
+            o.sales_id
+        FROM
+             Orders AS o
+        LEFT JOIN
+             Company AS C
+           ON
+             o.com_id = c.com_id
+        WHERE
+          c.name = 'RED');
+
+/*Write an SQL query to report all customers who never order anything.
+Return the result table in any order.*/
+SELECT
+    name AS Customers
+FROM
+    Customers AS c
+LEFT JOIN
+    Orders AS o ON c.id = o.customerId
+WHERE
+    o.customerId IS NULL;
+    
+/*Write an SQL query to find the employees who earn more than their managers.
+Return the result table in any order.*/
+SELECT
+   a.Name AS 'Employee'
+FROM
+    Employee AS a,
+    Employee AS b
+WHERE
+    a.ManagerId = b.Id
+        AND a.Salary > b.Salary;
